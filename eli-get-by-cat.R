@@ -37,6 +37,7 @@ get_by_cat <- function(array, column_names, category) {
     cat("Category not found in the array.")
     return(NULL)
   }
+  
 
   # extract the specified column and key rows
   result_array <- array[, c(category_index, 1), drop = FALSE]
