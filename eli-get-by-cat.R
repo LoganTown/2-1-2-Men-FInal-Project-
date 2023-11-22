@@ -14,7 +14,7 @@
   data <- read.csv(csv_file, header = TRUE)
   
   column_names <- colnames(data)
-  
+
   print(column_names)
   # make matrix data using data
 
@@ -24,9 +24,8 @@
 
   my_array <- array(matrix_data, dim = dimensions)
   colnames(my_array) <- column_names
-  View(my_array)
 
-get_by_cat <- function(array, column_names, category) {
+get_by_cat <- function(array, category) {
 
   # find the index of the category in the column names of array
 
@@ -39,10 +38,14 @@ get_by_cat <- function(array, column_names, category) {
   }
   
 
-  # extract the specified column and key rows
-  result_array <- array[, c(category_index, 1), drop = FALSE]
+  # extract the specified column and key rows, 1 and 9 are the column # and name of player, category_index is the specified category.
+  result_array <- array[, c(1, 9, category_index), drop = FALSE]
 
 
   return(result_array)
 }
+
+  # Test code
+  print(get_by_cat(my_array, "kills"))
+  print(get_by_cat(my_array, "fave.weapon"))
 
