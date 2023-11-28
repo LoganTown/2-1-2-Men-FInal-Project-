@@ -42,13 +42,15 @@ source("getData_LJMA.R")
 cat("Welcome to the Logan, Landon, and Eli's Call of Duty Data Analyzer!\n")
 
 # while loop that allows users to do different things with the data
+esports_data <- my_array
 
 while (TRUE) {
   cat("\nChoose an option:\n")
   cat("1. Get player profile\n")
   cat("2. Compare stats between two players\n")
   cat("3. Compare specific stats of multiple players\n")
-  cat("4. Exit\n")
+  cat("4. Get the player(s) with the highest specified stat\n")
+  cat("5. Exit\n")
 
   # stores the number choice as a variable
 
@@ -84,18 +86,28 @@ while (TRUE) {
       getPlayerList(esports_data)
     }
     else {
-      stats_to_compare <- strsplit(readline("Enter stats to compare (comma-separated; enter 'SL' for player list): "), ",")[[1]]
+      stats_to_compare <- strsplit(readline("Enter stats to compare (comma-separated; enter 'SL' for stat list): "), ",")[[1]]
     }
     if (stats_to_compare != 'SL'){
       compareSpecificStats(esports_data, player_names, stats_to_compare)
     }
     else {
       getStatList(esports_data)
+    }}
+    # choice 4 gets player(s) with highest specified stat
+    else if (choice == 4){
+    stat <- strsplit(readline("Enter stat (enter 'SL' for stat list): "), ",")[[1]]
+    if (stat != 'SL'){
+      getHighestStat(my_array, stat)
+    }
+    else{
+      getStatList(my_array)
     }
 
-  # choice 4 exits
+  }
+  # choice 5 exits
 
-  } else if (choice == 4) {
+   else if (choice == 5) {
     cat("Exiting program.\n")
     break
 

@@ -48,6 +48,12 @@ getHighestStat <- function(array, stat){
   # Sets the array to be used as an array with just the necessary stat
   statArray <- getByCat(array, stat)
 
+  # If stat isn't numeric, it isn't comparable
+  if (!all(is.numeric(statArray[, 2]))) {
+    cat("This stat is not numeric.\n")
+    return(NULL)
+  }
+
   # Saves the max value of the desired stat as a variable
   maxValue <- max(statArray[, 2])
 
@@ -64,4 +70,12 @@ getHighestStat <- function(array, stat){
 }
 
 # Test code
-getHighestStat(my_array, "deaths")
+# getHighestStat(my_array, "map")
+
+getStatList <- function(array){
+  sortedColumns <- sort(colnames(array))
+  cat("Stats: \n \n")
+  cat(paste(sortedColumns, collapse = ", "), "\n")
+}
+
+getStatList(my_array)
