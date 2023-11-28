@@ -79,3 +79,61 @@ getStatList <- function(array){
 
 # Test code
 # getStatList(my_array)
+
+getPlayerList <- function(array, page) {
+  # Extract the column with player names
+  playerList <- array[, 9]
+
+  # Remove duplicates from the player list
+  uniquePlayerList <- unique(playerList)
+
+  # Sort the unique player list alphabetically
+  sortedPlayerList <- sort(uniquePlayerList)
+
+  if (page == "all") {
+    # Display all players at once
+    cat("All Players (Alphabetical Order, No Duplicates):\n")
+    cat(sortedPlayerList, sep = "\n")
+  } else {
+    # Calculate the starting index for the current page
+    start_index <- (page - 1) * 10 + 1
+
+    # Calculate the ending index for the current page
+    end_index <- min(page * 10, length(sortedPlayerList))
+
+    # Extract the players for the current page
+    current_page_players <- sortedPlayerList[start_index:end_index]
+
+    # Print the current page of players
+    cat("Page", page, "of Players (Alphabetical Order, No Duplicates):\n")
+    cat(current_page_players, sep = "\n")
+  }
+}
+
+getPlayerListRunner <- function() {
+
+page <- 1
+
+while (TRUE) {
+  getPlayerList(myArray, page)
+
+  # Prompt user for input
+  user_input <- readline("Enter '<' to move backward, '>' to move forward, 'a' to view all, or 'x' to exit: ")
+
+  if (user_input == "x") {
+    cat("Exiting the loop.\n")
+    break
+  } else if (user_input == "<") {
+    # Move backward if possible
+    page <- max(1, page - 1)
+  } else if (user_input == ">") {
+    # Move forward if possible
+    page <- page + 1
+  } else if (user_input == "a") {
+    # View all players at once
+    getPlayerList(myArray, "all")
+    break  # exit the loop after viewing all players
+  } else {
+    cat("Invalid input. Please enter '<', '>', 'a', or 'x'.\n")
+  }
+}}

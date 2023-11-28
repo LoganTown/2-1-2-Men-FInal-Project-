@@ -71,7 +71,7 @@ while (TRUE) {
         comparePlayers(esportsData, player1, player2)
         break
       } else {
-        getPlayerList(esportsData)
+        getPlayerListRunner()
       }
     }
 
@@ -79,7 +79,7 @@ while (TRUE) {
   } else if (choice == 3) {
     playerNames <- strsplit(readline("Enter player names (comma-separated; enter 'PL' for player list): "), ",")[[1]]
     if (playerNames == 'PL') {
-      getPlayerList(esportsData)
+      getPlayerListRunner()
     } else {
       statsToCompare <- strsplit(readline("Enter stats to compare (comma-separated; enter 'SL' for stat list): "), ",")[[1]]
     }
