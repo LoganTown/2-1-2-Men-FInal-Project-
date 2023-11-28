@@ -3,12 +3,14 @@ library(dplyr)
 
 # Sample esports data - testing sample values to figure out how graph works
 esports_data <- data.frame(
-  Player = c("Player1", "Player2", "Player3", "Player4"),
-  Score = c(120, 90, 110, 80),
-  Kills = c(50, 40, 60, 30),
-  Deaths = c(20, 15, 25, 18),
-  Assists = c(30, 25, 35, 20)
+  Player = c("Player1", "Player2", "Player3", "Player4"), # Real implementation - row in matrix that contains player names
+  Score = c(120, 90, 110, 80), # Real implementation - row in matrix that contains score
+  Kills = c(50, 40, 60, 30), # Real implementation - row in matrix that contains kills
+  Deaths = c(20, 15, 25, 18), # Real implementation - row in matrix that contains deaths
+  Assists = c(30, 25, 35, 20) # Real implementation - row in matrix that contains assists
 )
+
+# Further implementation - rows in matrix that contain any other relevant information for graphing
 
 # Function to compare stats between two players and display bar graphs
 comparePlayersWithBarGraphs <- function(player_data, player1, player2) {

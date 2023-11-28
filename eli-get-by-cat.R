@@ -15,7 +15,6 @@
   
   column_names <- colnames(data)
 
-  print(column_names)
   # make matrix data using data
 
   matrix_data <- as.matrix(data)
@@ -39,13 +38,13 @@ get_by_cat <- function(array, category) {
   
 
   # extract the specified column and key rows, 1 and 9 are the column # and name of player, category_index is the specified category.
-  result_array <- array[, c(1, 9, category_index), drop = FALSE]
-
+  result_array <- array[, c(9, category_index), drop = FALSE]
+  result_array <- result_array[order(result_array[, 2], decreasing = TRUE), ]
 
   return(result_array)
 }
 
   # Test code
   print(get_by_cat(my_array, "kills"))
-  print(get_by_cat(my_array, "fave.weapon"))
+
 
