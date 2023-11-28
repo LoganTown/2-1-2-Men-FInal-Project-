@@ -110,30 +110,32 @@ getPlayerList <- function(array, page) {
   }
 }
 
+
 getPlayerListRunner <- function() {
 
-page <- 1
+  page <- 1
 
-while (TRUE) {
-  getPlayerList(myArray, page)
+  while (TRUE) {
+    getPlayerList(myArray, page)
 
-  # Prompt user for input
-  user_input <- readline("Enter '<' to move backward, '>' to move forward, 'a' to view all, or 'x' to exit: ")
+    # Prompt user for input
+    userInput <- readline("Enter '<' to move backward, '>' to move forward, 'a' to view all, or 'x' to exit: ")
 
-  if (user_input == "x") {
-    cat("Exiting the loop.\n")
-    break
-  } else if (user_input == "<") {
-    # Move backward if possible
-    page <- max(1, page - 1)
-  } else if (user_input == ">") {
-    # Move forward if possible
-    page <- page + 1
-  } else if (user_input == "a") {
-    # View all players at once
-    getPlayerList(myArray, "all")
-    break  # exit the loop after viewing all players
-  } else {
-    cat("Invalid input. Please enter '<', '>', 'a', or 'x'.\n")
+    if (userInput == "x") {
+      cat("Exiting the loop.\n")
+      break
+    } else if (userInput == "<") {
+      # Move backward if possible
+      page <- max(1, page - 1)
+    } else if (userInput == ">") {
+      # Move forward if possible
+      page <- page + 1
+    } else if (userInput == "a") {
+      # View all players at once
+      getPlayerList(myArray, "all")
+      break  # exit the loop after viewing all players
+    } else {
+      cat("Invalid input. Please enter '<', '>', 'a', or 'x'.\n")
+    }
   }
-}}
+}
