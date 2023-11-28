@@ -71,10 +71,45 @@ if (!all(sapply(trimws(statArray[, 2]), function(x) grepl("^\\s*-?\\d*\\.?\\d+\\
 # Test code
 # getHighestStat(myArray, "map")
 
-getStatList <- function(array){
+getStatList <- function(array, page) {
   sortedColumns <- sort(colnames(array))
-  cat("Stats: \n \n")
-  cat(paste(sortedColumns, collapse = ", "), "\n")
+
+  if (page == "all") {
+    cat("All Stats:\n\n")
+    cat(paste(sortedColumns, collapse = "\n"), "\n")
+  } else {
+    startIndex <- (page - 1) * 10 + 1
+    endIndex <- min(page * 10, length(sortedColumns))
+    currentPageStats <- sortedColumns[startIndex:endIndex]
+
+    cat("Page", page, "of Stats:\n")
+    cat(paste(currentPageStats, collapse = "\n"), "\n")
+  }
+}
+
+
+getStatListRunner <- function() {
+
+  page <- 1
+
+  while (TRUE) {
+    getStatList(myArray, page)
+
+    userInput <- readline("Enter '<' to move backward, '>' to move forward, 'a' to view all, or 'x' to exit: ")
+
+    if (userInput == "x") {
+      break
+    } else if (userInput == "<") {
+      page <- max(1, page - 1)
+    } else if (userInput == ">") {
+      page <- page + 1
+    } else if (userInput == "a") {
+      getStatList(myArray, "all")
+      break
+    } else {
+      cat("Invalid input. Please enter '<', '>', 'a', or 'x'.\n")
+    }
+  }
 }
 
 # Test code
@@ -96,20 +131,19 @@ getPlayerList <- function(array, page) {
     cat(sortedPlayerList, sep = "\n")
   } else {
     # Calculate the starting index for the current page
-    start_index <- (page - 1) * 10 + 1
+    startIndex <- (page - 1) * 10 + 1
 
     # Calculate the ending index for the current page
-    end_index <- min(page * 10, length(sortedPlayerList))
+    endIndex <- min(page * 10, length(sortedPlayerList))
 
     # Extract the players for the current page
-    current_page_players <- sortedPlayerList[start_index:end_index]
+    currentPagePlayers <- sortedPlayerList[startIndex:endIndex]
 
     # Print the current page of players
     cat("Page", page, "of Players (Alphabetical Order, No Duplicates):\n")
-    cat(current_page_players, sep = "\n")
+    cat(currentPagePlayers, sep = "\n")
   }
 }
-
 
 getPlayerListRunner <- function() {
 
@@ -122,7 +156,6 @@ getPlayerListRunner <- function() {
     userInput <- readline("Enter '<' to move backward, '>' to move forward, 'a' to view all, or 'x' to exit: ")
 
     if (userInput == "x") {
-      cat("Exiting the loop.\n")
       break
     } else if (userInput == "<") {
       # Move backward if possible

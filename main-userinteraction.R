@@ -77,17 +77,19 @@ while (TRUE) {
 
   # Choice 3 compares specific stats of multiple different players
   } else if (choice == 3) {
+    repeat{
     playerNames <- strsplit(readline("Enter player names (comma-separated; enter 'PL' for player list): "), ",")[[1]]
     if (playerNames == 'PL') {
       getPlayerListRunner()
     } else {
       statsToCompare <- strsplit(readline("Enter stats to compare (comma-separated; enter 'SL' for stat list): "), ",")[[1]]
-    }
+
     if (statsToCompare != 'SL') {
       compareSpecificStats(esportsData, playerNames, statsToCompare)
+      break
     } else {
-      getStatList(esportsData)
-    }
+      getStatListRunner()
+    }}}
 
   # Choice 4 gets player(s) with highest specified stat
   } else if (choice == 4) {
@@ -95,7 +97,7 @@ while (TRUE) {
     if (stat != 'SL') {
       getHighestStat(myArray, stat)
     } else {
-      getStatList(myArray)
+      getStatListRunner()
     }
 
   # Choice 5 exits
