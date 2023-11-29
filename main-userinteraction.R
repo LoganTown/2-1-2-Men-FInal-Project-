@@ -10,27 +10,29 @@
 #   Parameters: data, two player names
 #   Returns: print statement of two players getPlayerProfile, maybe side by side for easy comparison?
 
+# DONE
+
 # - getPlayerList(esports_data)
 #   Parameters: data
 #   Returns: print statement of all player names, sorted alphabetically maybe?
+
+# DONE
 
 # - getStatList(esports_data)
 #   Parameters: data
 #   Returns: print statement of all stats, sorted alphabetically maybe?
 
+# DONE
+
 # - compareSpecificStats(esports_data, player_names, stats_to_compare)
 #   Parameters: data, list of player names, list of stats to compare
 #   Returns: print statement of multiple players' specific stats
 
-# NOT IMPLEMENTED (ideas):
+# DONE
 
 # - getHighestStat(esports_data, stat)
 #   Parameters: data, stat
 #   Returns: print statement with player name and their specific specified stat, error if not numerical value
-
-# - getTopStat(esports_data, player_count, stat)
-#   Parameters: data, number of players to display, stat to display
-#   Returns: print statement with top player_count players and their stat, error if not numerical value
 
 # Imports functions from other programs
 
@@ -78,13 +80,15 @@ while (TRUE) {
   # Choice 3 compares specific stats of multiple different players
   } else if (choice == 3) {
     repeat{
-    playerNames <- strsplit(readline("Enter player names (comma-separated; enter 'PL' for player list): "), ",")[[1]]
-    if (playerNames == 'PL') {
+    playerNames <- strsplit(readline("Enter player names (case-sensitive; comma-separated; enter 'PL' for player list): "), ",")[[1]]
+      playerNames <- trimws(playerNames)
+    if (playerNames[1] == 'PL') {
       getPlayerListRunner()
     } else {
       statsToCompare <- strsplit(readline("Enter stats to compare (comma-separated; enter 'SL' for stat list): "), ",")[[1]]
+      statsToCompare <- trimws(statsToCompare)
 
-    if (statsToCompare != 'SL') {
+    if (statsToCompare[1] != 'SL') {
       compareSpecificStats(esportsData, playerNames, statsToCompare)
       break
     } else {

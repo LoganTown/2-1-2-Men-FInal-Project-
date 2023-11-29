@@ -25,11 +25,11 @@ colnames(myArray) <- columnNames
 getByCat <- function(array, category) {
 
   # Find the index of the category in the column names of array
-  categoryIndex <- match(category, colnames(array))
+  categoryIndex <- match(tolower(category), colnames(array))
 
   # Check if the category is found
   if (is.na(categoryIndex)) {
-    cat("Category not found in the array.")
+    cat("Stat not found in the data.")
     return(NULL)
   }
 
@@ -46,7 +46,7 @@ getByCat <- function(array, category) {
 getHighestStat <- function(array, stat){
 
   # Sets the array to be used as an array with just the necessary stat
-  statArray <- getByCat(array, stat)
+  statArray <- getByCat(array, tolower(stat))
 
   # If stat isn't numeric, it isn't comparable
 if (!all(sapply(trimws(statArray[, 2]), function(x) grepl("^\\s*-?\\d*\\.?\\d+\\s*$", x)))) {
@@ -116,17 +116,11 @@ getStatListRunner <- function() {
 # getStatList(my_array)
 
 getPlayerList <- function(array, page) {
-  # Extract the column with player names
   playerList <- array[, 9]
-
-  # Remove duplicates from the player list
   uniquePlayerList <- unique(playerList)
-
-  # Sort the unique player list alphabetically
   sortedPlayerList <- sort(uniquePlayerList)
 
   if (page == "all") {
-    # Display all players at once
     cat("All Players (Alphabetical Order, No Duplicates):\n")
     cat(sortedPlayerList, sep = "\n")
   } else {
@@ -136,7 +130,6 @@ getPlayerList <- function(array, page) {
     # Calculate the ending index for the current page
     endIndex <- min(page * 10, length(sortedPlayerList))
 
-    # Extract the players for the current page
     currentPagePlayers <- sortedPlayerList[startIndex:endIndex]
 
     # Print the current page of players
@@ -158,17 +151,29 @@ getPlayerListRunner <- function() {
     if (userInput == "x") {
       break
     } else if (userInput == "<") {
-      # Move backward if possible
       page <- max(1, page - 1)
     } else if (userInput == ">") {
-      # Move forward if possible
       page <- page + 1
     } else if (userInput == "a") {
-      # View all players at once
       getPlayerList(myArray, "all")
-      break  # exit the loop after viewing all players
+      break
     } else {
       cat("Invalid input. Please enter '<', '>', 'a', or 'x'.\n")
     }
   }
+}
+
+compareSpecificStats <- function(array, players, categories) {
+  playerIndices <- match(players, array[, 9])
+
+  categoryIndices <- match(tolower(categories), colnames(array))
+
+  if (any(is.na(playerIndices)) || any(is.na(categoryIndices))) {
+    cat("One or more players or categories not found in the array.\n")
+    return(NULL)
+  }
+
+  resultArray <- array[playerIndices, c(9, categoryIndices), drop = FALSE]
+
+  print(resultArray)
 }
