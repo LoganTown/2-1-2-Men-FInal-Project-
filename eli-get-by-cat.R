@@ -176,4 +176,5 @@ compareSpecificStats <- function(array, players, categories) {
   resultArray <- array[playerIndices, c(9, categoryIndices), drop = FALSE]
 
   print(resultArray)
+
 }

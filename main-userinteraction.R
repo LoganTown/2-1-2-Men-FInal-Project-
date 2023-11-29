@@ -1,6 +1,6 @@
 # Eli's User Interaction Program (Main.R)
 
-# Possible functions to write:
+# Functions to write:
 
 # - getPlayerProfile(esports_data, player_name)
 #   Parameters: data, player name
