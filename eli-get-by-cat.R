@@ -1,27 +1,44 @@
-# Construct the file path (modify as needed)
-# filePath <- file.path("/Users/school/github-classroom/cs-with-mike/2-1-2-Men-FInal-Project-", CodCwlData.csv)
-#
-# if (!grepl("/", filename)) {
-#   filename <- file.path(getwd(), filename)
-# }
-#
-# if (!file.exists(filename)) {
-#   return(NULL)
-# }
-# Set data to info from CSV file
-csvFile <- "/Users/school/github-classroom/cs-with-mike/2-1-2-Men-FInal-Project-/Cod_cwl_data.csv"
-data <- read.csv(csvFile, header = TRUE)
+#ask for a list of csvs, for example: cod.csv, Cod_cwl_data.csv
+csv_list <- readline("Enter the csv files you want to use, seperated by commas: ")
+csv_list <- strsplit(csv_list, ",")[[1]]
+csv_list <- trimws(csv_list)
 
-columnNames <- colnames(data)
 
-# Make matrix data using data
-matrixData <- as.matrix(data)
+# Function: makeArray
+# Input:
+#   - csv_name: A character string representing the file path or name of a CSV file.
+#              The CSV file is assumed to have headers, and its data will be used to create an array.
+# Output:
+#   - myArray: A 2D array (matrix) representing the data from the CSV file.
+#               The column names of the array are set to the column names from the CSV file.
+#               If the CSV file has 'm' rows and 'n' columns, the array dimensions will be c(m, n).
+#               The function returns this array as its output.
+makeArray <- function(csv_name) {
+  data <- read.csv(csv_name)
+  columnNames <- colnames(data)
+  matrixData <- as.matrix(data)
+  dimensions <- c(nrow(matrixData), ncol(matrixData))
+  myArray <- array(matrixData, dim = dimensions)
+  colnames(myArray) <- columnNames
+  return(myArray)
+}
 
-dimensions <- c(nrow(matrixData), ncol(matrixData))
+data_array <- lapply(csv_list, makeArray) # access with double brackets
 
-myArray <- array(matrixData, dim = dimensions)
-colnames(myArray) <- columnNames
 
+
+
+
+
+
+
+# Function: getByCat
+# Input:
+#   - array: The 2D array containing player data.
+#   - category: The category (stat) to retrieve from the array.
+# Output:
+#   - resultArray: A 2D array containing player names and the specified category,
+#      
 getByCat <- function(array, category) {
 
   # Find the index of the category in the column names of array
@@ -40,18 +57,22 @@ getByCat <- function(array, category) {
   return(resultArray)
 }
 
-# Test code
-# print(getByCat(myArray, "kills"))
 
+# Function: getHighestStat
+# Input:
+#   - array: The 2D array containing player data.
+#   - stat: The specific stat to find the highest value for.
+# Output:
+#   - Prints information about the player(s) with the highest specified stat.
 getHighestStat <- function(array, stat){
 
   # Sets the array to be used as an array with just the necessary stat
   statArray <- getByCat(array, tolower(stat))
 
   # If stat isn't numeric, it isn't comparable
-if (!all(sapply(trimws(statArray[, 2]), function(x) grepl("^\\s*-?\\d*\\.?\\d+\\s*$", x)))) {
-  cat("This stat is not numeric.\n")
-  return(NULL)}
+  if (!all(sapply(trimws(statArray[, 2]), function(x) grepl("^\\s*-?\\d*\\.?\\d+\\s*$", x)))) {
+    cat("This stat is not numeric.\n")
+    return(NULL)}
 
   # Saves the max value of the desired stat as a variable
   maxValue <- max(statArray[, 2])
@@ -68,9 +89,13 @@ if (!all(sapply(trimws(statArray[, 2]), function(x) grepl("^\\s*-?\\d*\\.?\\d+\\
   print(maxPlayers)
 }
 
-# Test code
-# getHighestStat(myArray, "map")
 
+# Function: getStatList
+# Input:
+#   - array: The 2D array containing player data.
+#   - page: The page number or "all" to view all stats.
+# Output:
+#   - Prints a list of stats either for the specified page or all stats.
 getStatList <- function(array, page) {
   sortedColumns <- sort(colnames(array))
 
@@ -88,12 +113,20 @@ getStatList <- function(array, page) {
 }
 
 
-getStatListRunner <- function() {
+# Function: getStatListRunner
+# Input:
+#   - array_list: A list of 2D arrays containing player data.
+# Output:
+#   - Prints stat lists and interacts with the user to navigate through the stats.
+getStatListRunner <- function(array_list) {
 
   page <- 1
 
   while (TRUE) {
-    getStatList(myArray, page)
+    # Iterate through each array in the list
+    for (i in seq_along(array_list)) {
+      getStatList(array_list[[i]], page)
+    }
 
     userInput <- readline("Enter '<' to move backward, '>' to move forward, 'a' to view all, or 'x' to exit: ")
 
@@ -104,7 +137,10 @@ getStatListRunner <- function() {
     } else if (userInput == ">") {
       page <- page + 1
     } else if (userInput == "a") {
-      getStatList(myArray, "all")
+      # Print all stats for each array in the list
+      for (i in seq_along(array_list)) {
+        getStatList(array_list[[i]], "all")
+      }
       break
     } else {
       cat("Invalid input. Please enter '<', '>', 'a', or 'x'.\n")
@@ -112,9 +148,13 @@ getStatListRunner <- function() {
   }
 }
 
-# Test code
-# getStatList(my_array)
 
+# Function: getPlayerList
+# Input:
+#   - array: The 2D array containing player data.
+#   - page: The page number or "all" to view all players.
+# Output:
+#   - Prints a list of players either for the specified page or all players.
 getPlayerList <- function(array, page) {
   playerList <- array[, 9]
   uniquePlayerList <- unique(playerList)
@@ -138,12 +178,20 @@ getPlayerList <- function(array, page) {
   }
 }
 
-getPlayerListRunner <- function() {
 
+# Function: getPlayerListRunner
+# Input:
+#   - array_list: A list of 2D arrays containing player data.
+# Output:
+#   - Prints player lists and interacts with the user to navigate through the players.
+getPlayerListRunner <- function(array_list) {
   page <- 1
 
   while (TRUE) {
-    getPlayerList(myArray, page)
+    # Iterate through each array in the list
+    for (i in seq_along(array_list)) {
+      getPlayerList(array_list[[i]], page)
+    }
 
     # Prompt user for input
     userInput <- readline("Enter '<' to move backward, '>' to move forward, 'a' to view all, or 'x' to exit: ")
@@ -155,7 +203,10 @@ getPlayerListRunner <- function() {
     } else if (userInput == ">") {
       page <- page + 1
     } else if (userInput == "a") {
-      getPlayerList(myArray, "all")
+      # Print all players for each array in the list
+      for (i in seq_along(array_list)) {
+        getPlayerList(array_list[[i]], "all")
+      }
       break
     } else {
       cat("Invalid input. Please enter '<', '>', 'a', or 'x'.\n")
@@ -163,6 +214,14 @@ getPlayerListRunner <- function() {
   }
 }
 
+
+# Function: compareSpecificStats
+# Input:
+#   - array: The 2D array containing player data.
+#   - players: Vector of player names to compare.
+#   - categories: Vector of stat categories to compare.
+# Output:
+#   - Prints a 2D array containing the specified players and categories.
 compareSpecificStats <- function(array, players, categories) {
   playerIndices <- match(players, array[, 9])
 
