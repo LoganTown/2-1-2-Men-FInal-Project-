@@ -19,7 +19,7 @@ get_by_filter_greater <- function(filename, amount, columnName) {
     return(NULL)
   }
   
-  # Read the CSV file and store it in the 'data' variable
+  # Read the CSV file and store it in the 'data' variable2
   data <- read.csv(filename)
   
   if (!(columnName %in% names(data))) {
