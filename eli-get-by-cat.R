@@ -60,33 +60,54 @@ getByCat <- function(array, category) {
 
 # Function: getHighestStat
 # Input:
-#   - array: The 2D array containing player data.
+#   - array_list: A list of 2D arrays containing player data.
 #   - stat: The specific stat to find the highest value for.
 # Output:
 #   - Prints information about the player(s) with the highest specified stat.
-getHighestStat <- function(array, stat){
-
-  # Sets the array to be used as an array with just the necessary stat
-  statArray <- getByCat(array, tolower(stat))
-
-  # If stat isn't numeric, it isn't comparable
-  if (!all(sapply(trimws(statArray[, 2]), function(x) grepl("^\\s*-?\\d*\\.?\\d+\\s*$", x)))) {
-    cat("This stat is not numeric.\n")
-    return(NULL)}
-
-  # Saves the max value of the desired stat as a variable
-  maxValue <- max(statArray[, 2])
-
-  # Rows that have the max value as their stat value are saved as a variable
-  maxRows <- which(statArray[, 2] == maxValue)
-
-  # Players in these rows are saved as a variable
-  maxPlayers <- statArray[maxRows, ]
-
-  # Prints everything nicely!
+getHighestStat <- function(array_list, stat) {
+  maxValue <- -Inf #R THING? 
+  overallMaxPlayers <- data.frame(stringsAsFactors = FALSE)
+  
+  for (array in array_list) {
+    #check if stat is present in array
+    
+    if (stat %in% colnames(array)) {
+      #find relevant columns for current array
+      relevantCols <- c(which(tolower(colnames(array)) == tolower(stat)), 
+                        which(tolower(colnames(array)) %in% c("name", "player")))
+      
+      statArray <- array[, relevantCols, drop = FALSE]
+      
+      # If stat isn't numeric, it isn't comparable
+      numeric_values <- as.numeric(trimws(statArray[, 1]))
+      
+      if (any(is.na(numeric_values) | !is.finite(numeric_values))) {
+        cat("This stat is not numeric for one of the arrays.\n")
+      } else {
+        # find the max value in the specified stat column
+        bigValue <- max(as.numeric(statArray[, 1]))
+        
+        #check if bigger than current stat, replace if it is
+        if (maxValue < bigValue) {
+          maxValue <- bigValue
+          
+          # Rows that have the overall max value as their stat value are saved as a variable
+          maxRows <- which(as.numeric(statArray[, 1]) == maxValue)
+          
+          #save players in current biggest row
+          overallMaxPlayers <- statArray[maxRows, ]
+        }
+      }
+      
+    } else {
+      cat("Specified stat not found in one of the arrays.\n")
+    }
+  }
+  
+  # Print the overall highest stat, value, and player information
   cat("The highest ", stat, " is", maxValue, ". \n")
   cat("Players:\n")
-  print(maxPlayers)
+  print(overallMaxPlayers)
 }
 
 
@@ -217,23 +238,26 @@ getPlayerListRunner <- function(array_list) {
 
 # Function: compareSpecificStats
 # Input:
-#   - array: The 2D array containing player data.
+#   - array_list: A list of 2D arrays containing player data.
 #   - players: Vector of player names to compare.
 #   - categories: Vector of stat categories to compare.
 # Output:
 #   - Prints a 2D array containing the specified players and categories.
-compareSpecificStats <- function(array, players, categories) {
-  playerIndices <- match(players, array[, 9])
-
-  categoryIndices <- match(tolower(categories), colnames(array))
-
-  if (any(is.na(playerIndices)) || any(is.na(categoryIndices))) {
-    cat("One or more players or categories not found in the array.\n")
-    return(NULL)
+compareSpecificStats <- function(array_list, players, categories) {
+  resultArrays <- list()
+  
+  for (array in array_list) {
+    playerIndices <- match(players, array[, 9])
+    categoryIndices <- match(tolower(categories), colnames(array))
+    
+    if (any(is.na(playerIndices)) || any(is.na(categoryIndices))) {
+      cat("One or more players or categories not found in the array.\n")
+      resultArrays <- c(resultArrays, list(NULL))
+    } else {
+      resultArray <- array[playerIndices, c(9, categoryIndices), drop = FALSE]
+      resultArrays <- c(resultArrays, list(resultArray))
+    }
   }
-
-  resultArray <- array[playerIndices, c(9, categoryIndices), drop = FALSE]
-
-  print(resultArray)
-
+  
+  print(resultArrays)
 }
