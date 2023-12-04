@@ -1,9 +1,7 @@
 #ask for a list of csvs, for example: cod.csv, Cod_cwl_data.csv
 
-
-#csv_list <- readline("Enter the csv files you want to use, seperated by commas: ")
+csv_list <- readline("Enter the csv files you want to use, seperated by commas: ")
 #csv_list <- c("cod.csv", "Cod_cwl_data.csv") #temp, remove later but makes it so i dont have to enter csv each time
-csv_list <- c("Cod_cwl_data.csv") #temp, remove later but makes it so i dont have to enter csv each time
 csv_list <- strsplit(csv_list, ",")[[1]]
 csv_list <- trimws(csv_list)
 
@@ -250,35 +248,34 @@ getPlayerListRunner <- function(array_list) {
 # Output:
 #   - Prints a 2D array containing the specified players and categories.
 compareSpecificStats <- function(array_list, players, categories) {
-  resultArrays <- list()
-  
   for (array in array_list) {
     playerIndices <- which(colnames(array) %in% c("player", "name"))
     categoryIndices <- match(tolower(categories), tolower(colnames(array)))
 
     if (any(is.na(playerIndices)) || any(is.na(categoryIndices))) {
       cat("One or more players or categories not found in the array.\n")
-      resultArrays <- c(resultArrays, list(NULL))
     } else {
-      # Identify rows corresponding to player1 and player2
-      player1Index <- which(array[, playerIndices] %in% players[1])
-      player2Index <- which(array[, playerIndices] %in% players[2])
-      
-      array_df <- data.frame(array)
+      # Identify the first row corresponding to player1 and player2
+      player1Index <- which(array[, playerIndices] %in% players[1])[1]
+      player2Index <- which(array[, playerIndices] %in% players[2])[1]
       
       # Extract data for player1 and player2
-      resultArray <- array_df[c(player1Index, player2Index), c(playerIndices, categoryIndices + length(playerIndices)), drop = FALSE]
+      dataPlayer1 <- array[player1Index, categoryIndices, drop = FALSE]
+      dataPlayer2 <- array[player2Index, categoryIndices, drop = FALSE]
       
-      # Convert selected columns to numeric
-      resultArray[, (length(playerIndices) + 1):ncol(resultArray)] <- lapply(resultArray[, (length(playerIndices) + 1):ncol(resultArray)], as.numeric)
+      # Label columns with corresponding categories
+      colnames(dataPlayer1) <- colnames(array)[categoryIndices]
+      colnames(dataPlayer2) <- colnames(array)[categoryIndices]
       
-      # Sum up the specified categories for each player
-      resultArraySums <- aggregate(resultArray[, (length(playerIndices) + 1):ncol(resultArray)], by = list(player = array_df$player[c(player1Index, player2Index)]), FUN = sum, na.rm = TRUE)
       
-      resultArrays <- c(resultArrays, list(resultArraySums))
+      # Print arrays with player names
+      cat("Data for", players[1], ":\n")
+      print(dataPlayer1)
+      
+      cat("Data for", players[2], ":\n")
+      print(dataPlayer2)
     }
   }
-  print(resultArrays)
 }
 
 
@@ -291,7 +288,7 @@ compareSpecificStats <- function(array_list, players, categories) {
 #   - Comparison of statistics between the two players for selected categories.
 comparePlayers <- function(array_list, player1, player2){
   players <- c(player1, player2)
-  categories <- c("kills","wins")
+  categories <- c("kills" , "assists" , "deaths" , "scorestreaks.kills" , "accuracy...." , "shots" , "time.alive..s." , "avg.time.per.life..s.")
   compareSpecificStats(array_list, players, categories)
 }
 
