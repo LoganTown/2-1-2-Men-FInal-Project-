@@ -69,12 +69,15 @@ while (TRUE) {
       player1 <- readline("Enter the first player name (enter 'PL' for player list): ")
       if (player1 == 'PL') {
         getPlayerListRunner(esportsData)
+        break
       } else {
         player2 <- readline("Enter the second player name (enter 'PL' for player list): ")
         if (player2 == 'PL') {
           getPlayerListRunner(esportsData)
+          break
         } else {
           comparePlayers(esportsData, player1, player2)
+          break
         }
       }
     }
@@ -102,7 +105,7 @@ while (TRUE) {
   } else if (choice == 4) {  
     stat <- readline("Enter stat (enter 'SL' for stat list): ")
     if (stat != 'SL') {
-      getHighestStat(myArray, stat)
+      getHighestStat(esportsData, stat)
     } else {
       getStatListRunner(esportsData)
     }

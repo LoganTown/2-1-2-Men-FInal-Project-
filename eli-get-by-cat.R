@@ -1,5 +1,9 @@
 #ask for a list of csvs, for example: cod.csv, Cod_cwl_data.csv
-csv_list <- readline("Enter the csv files you want to use, seperated by commas: ")
+
+
+#csv_list <- readline("Enter the csv files you want to use, seperated by commas: ")
+#csv_list <- c("cod.csv", "Cod_cwl_data.csv") #temp, remove later but makes it so i dont have to enter csv each time
+csv_list <- c("Cod_cwl_data.csv") #temp, remove later but makes it so i dont have to enter csv each time
 csv_list <- strsplit(csv_list, ",")[[1]]
 csv_list <- trimws(csv_list)
 
@@ -24,11 +28,6 @@ makeArray <- function(csv_name) {
 }
 
 data_array <- lapply(csv_list, makeArray) # access with double brackets
-
-
-
-
-
 
 
 
@@ -177,9 +176,16 @@ getStatListRunner <- function(array_list) {
 # Output:
 #   - Prints a list of players either for the specified page or all players.
 getPlayerList <- function(array, page) {
-  playerList <- array[, 9]
-  uniquePlayerList <- unique(playerList)
-  sortedPlayerList <- sort(uniquePlayerList)
+  # Find the column index containing player names
+  playerColumnIndex <- which(tolower(colnames(array)) %in% c("player", "name"))
+  
+  if (length(playerColumnIndex) == 0) {
+    cat("Error: Player names column not found in the array.\n")
+    return(NULL)
+  }
+  
+  playerList <- unique(array[, playerColumnIndex])
+  sortedPlayerList <- sort(playerList)
 
   if (page == "all") {
     cat("All Players (Alphabetical Order, No Duplicates):\n")
@@ -247,17 +253,90 @@ compareSpecificStats <- function(array_list, players, categories) {
   resultArrays <- list()
   
   for (array in array_list) {
-    playerIndices <- match(players, array[, 9])
-    categoryIndices <- match(tolower(categories), colnames(array))
-    
+    playerIndices <- which(colnames(array) %in% c("player", "name"))
+    categoryIndices <- match(tolower(categories), tolower(colnames(array)))
+
     if (any(is.na(playerIndices)) || any(is.na(categoryIndices))) {
       cat("One or more players or categories not found in the array.\n")
       resultArrays <- c(resultArrays, list(NULL))
     } else {
-      resultArray <- array[playerIndices, c(9, categoryIndices), drop = FALSE]
-      resultArrays <- c(resultArrays, list(resultArray))
+      # Identify rows corresponding to player1 and player2
+      player1Index <- which(array[, playerIndices] %in% players[1])
+      player2Index <- which(array[, playerIndices] %in% players[2])
+      
+      array_df <- data.frame(array)
+      
+      # Extract data for player1 and player2
+      resultArray <- array_df[c(player1Index, player2Index), c(playerIndices, categoryIndices + length(playerIndices)), drop = FALSE]
+      
+      # Convert selected columns to numeric
+      resultArray[, (length(playerIndices) + 1):ncol(resultArray)] <- lapply(resultArray[, (length(playerIndices) + 1):ncol(resultArray)], as.numeric)
+      
+      # Sum up the specified categories for each player
+      resultArraySums <- aggregate(resultArray[, (length(playerIndices) + 1):ncol(resultArray)], by = list(player = array_df$player[c(player1Index, player2Index)]), FUN = sum, na.rm = TRUE)
+      
+      resultArrays <- c(resultArrays, list(resultArraySums))
+    }
+  }
+  print(resultArrays)
+}
+
+
+# comparePlayers function: Compares statistics between two players for selected categories.
+# Inputs:
+#   - array_list: A list of 2D arrays containing player data.
+#   - player1: The name of the first player for comparison.
+#   - player2: The name of the second player for comparison.
+# Output:
+#   - Comparison of statistics between the two players for selected categories.
+comparePlayers <- function(array_list, player1, player2){
+  players <- c(player1, player2)
+  categories <- c("kills","wins")
+  compareSpecificStats(array_list, players, categories)
+}
+
+
+# getPlayerProfile function: Extracts and displays a player's statistics profile.
+# Inputs:
+#   - array: A matrix or data frame containing player statistics.
+#   - player: The name of the player whose profile is to be retrieved.
+# Output:
+#   - A matrix containing the player's statistics for selected categories.
+getPlayerProfile <- function(array_list, player) {
+  playerProfiles <- c()
+  
+  categories <- c("kills" , "assists" , "deaths" , "scorestreaks.kills" , "accuracy...." , "shots" , "time.alive..s." , "avg.time.per.life..s.")
+  
+  for (array in array_list) {
+    # Find the player indices in all columns
+    playerIndices <- which(array == player, arr.ind = TRUE)
+    
+    # Find category indices in all columns
+    categoryIndices <- which(tolower(colnames(array)) %in% tolower(categories))
+    
+    if (nrow(playerIndices) > 0) {
+      # Extract player's statistics for the specified categories
+      resultArray <- array[playerIndices[, "row"], categoryIndices, drop = FALSE]
+      
+      # Transpose the resultArray to have categories as rows
+      resultArray <- t(resultArray)
+      
+      # Save the result in the playerProfiles list
+      playerProfiles[[length(playerProfiles) + 1]] <- resultArray
     }
   }
   
-  print(resultArrays)
+  if (length(playerProfiles) == 0) {
+    cat("Player not found in any array.\n")
+    return(NULL)
+  }
+  
+  cat(paste0(player, "'s stat profiles:\n"))
+  for (i in seq_along(playerProfiles)) {
+    cat("Array ", i, ":\n")
+    print(playerProfiles[[i]])
+  }
 }
+
+
+
