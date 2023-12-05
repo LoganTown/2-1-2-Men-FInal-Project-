@@ -1,3 +1,5 @@
+source("eli-graph-stats.R")
+
 #ask for a list of csvs, for example: cod.csv, Cod_cwl_data.csv
 
 csv_list <- readline("Enter the csv files you want to use, seperated by commas: ")
@@ -80,6 +82,7 @@ getHighestStat <- function(array_list, stat) {
       
       if (any(is.na(numeric_values) | !is.finite(numeric_values))) {
         cat("This stat is not numeric for one of the arrays.\n")
+        returnValue(NULL)
       } else {
         # find the max value in the specified stat column
         bigValue <- max(as.numeric(statArray[, 1]))
@@ -94,6 +97,8 @@ getHighestStat <- function(array_list, stat) {
           #save players in current biggest row
           overallMaxPlayers <- statArray[maxRows, ]
         }
+
+
       }
       
     } else {
@@ -105,6 +110,9 @@ getHighestStat <- function(array_list, stat) {
   cat("The highest ", stat, " is", maxValue, ". \n")
   cat("Players:\n")
   print(overallMaxPlayers)
+  plotStatHistogram(array_list, stat)
+
+
 }
 
 
@@ -274,6 +282,7 @@ compareSpecificStats <- function(array_list, players, categories) {
       
       cat("Data for", players[2], ":\n")
       print(dataPlayer2)
+
     }
   }
 }

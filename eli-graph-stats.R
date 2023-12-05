@@ -1,42 +1,32 @@
-library(ggplot2)
-library(dplyr)
+plotStatHistogram <- function(array_list, stat) {
+  for (array in array_list) {
+    if (stat %in% colnames(array)) {
+      relevantCols <- c(which(tolower(colnames(array)) == tolower(stat)),
+                          which(tolower(colnames(array)) %in% c("name", "player")))
 
-# Sample esports data - testing sample values to figure out how graph works
-esports_data <- data.frame(
-  Player = c("Player1", "Player2", "Player3", "Player4"), # Real implementation - row in matrix that contains player names
-  Score = c(120, 90, 110, 80), # Real implementation - row in matrix that contains score
-  Kills = c(50, 40, 60, 30), # Real implementation - row in matrix that contains kills
-  Deaths = c(20, 15, 25, 18), # Real implementation - row in matrix that contains deaths
-  Assists = c(30, 25, 35, 20) # Real implementation - row in matrix that contains assists
-)
+      statArray <- array[, relevantCols, drop = FALSE]
 
-# Further implementation - rows in matrix that contain any other relevant information for graphing
+      numeric_values <- as.numeric(trimws(statArray[, 1]))
 
-# Function to compare stats between two players and display bar graphs
-comparePlayersWithBarGraphs <- function(player_data, player1, player2) {
-  player1_row <- player_data[player_data$Player == player1, ]
-  player2_row <- player_data[player_data$Player == player2, ]
-
-  if (nrow(player1_row) == 0 || nrow(player2_row) == 0) {
-    cat("One or both players not found. Please check the player names and try again.\n")
-    return(NULL)
+      if (any(is.na(numeric_values) | !is.finite(numeric_values))) {
+        cat("This stat is not numeric for one of the arrays.\n")
+      } else {
+        # Plot the histogram for the current stat
+        hist(numeric_values, main = paste("Histogram of", stat),
+             xlab = stat, ylab = "Frequency", col = "lightblue", border = "black")
+      }
+    } else {
+      cat("Specified stat not found in one of the arrays.\n")
+    }
   }
-
-  # Comparison of specific stats for selected players
-  selected_players <- player_data[player_data$Player %in% c(player1, player2), ]
-  comparison_data_long <- tidyr::pivot_longer(selected_players, cols = c("Kills", "Deaths", "Assists"), names_to = "Stat", values_to = "Value")
-
-  # Visualization: Bar chart of selected stats for each player
-  ggplot(comparison_data_long, aes(x = Player, y = Value, fill = Stat)) +
-    geom_bar(position = "dodge", stat = "identity", width = 0.7) +
-    labs(title = paste("Comparison of Specific Stats between", player1, "and", player2),
-         x = "Player",
-         y = "Value",
-         fill = "Stat") +
-    theme_minimal()
 }
 
-# Example usage
-player1 <- "Player1"
-player2 <- "Player2"
-comparePlayersWithBarGraphs(esports_data, player1, player2)
+plotComparisonBarGraph <- function(player1Data, player2Data, categories, playerNames) {
+  par(mfrow = c(1, 2))  # Set up a 1x2 grid for side-by-side plots
+
+  # Plot bar graphs for player1 and player2 side by side
+  barplot(as.matrix(player1Data), beside = TRUE, col = rainbow(length(categories)), main = playerNames[1])
+  barplot(as.matrix(player2Data), beside = TRUE, col = rainbow(length(categories)), main = playerNames[2])
+
+  par(mfrow = c(1, 1))  # Reset to a single plot
+}
