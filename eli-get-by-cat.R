@@ -274,14 +274,16 @@ compareSpecificStats <- function(array_list, players, categories) {
       # Label columns with corresponding categories
       colnames(dataPlayer1) <- colnames(array)[categoryIndices]
       colnames(dataPlayer2) <- colnames(array)[categoryIndices]
-      
-      
+
       # Print arrays with player names
       cat("Data for", players[1], ":\n")
       print(dataPlayer1)
       
       cat("Data for", players[2], ":\n")
       print(dataPlayer2)
+
+      print(createPlayerBarGraph(dataPlayer1, players[1]))
+      print(createPlayerBarGraph(dataPlayer2, players[2]))
 
     }
   }

@@ -1,3 +1,6 @@
+library(ggplot2)
+library(dplyr)
+
 plotStatHistogram <- function(array_list, stat) {
   for (array in array_list) {
     if (stat %in% colnames(array)) {
@@ -30,3 +33,19 @@ plotComparisonBarGraph <- function(player1Data, player2Data, categories, playerN
 
   par(mfrow = c(1, 1))  # Reset to a single plot
 }
+
+createPlayerBarGraph <- function(player_data, player_name) {
+  player_data_df <- as.data.frame(player_data)
+  player_data_df[] <- lapply(player_data_df, as.numeric)
+  player_data_long <- tidyr::gather(player_data_df, key = "variable", value = "value")
+
+  ggplot(player_data_long, aes(x = variable, y = value, fill = variable)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = paste("Player:", player_name),
+         x = "Category",
+         y = "Value",
+         fill = "Category") +
+    theme_minimal()
+}
+
+
