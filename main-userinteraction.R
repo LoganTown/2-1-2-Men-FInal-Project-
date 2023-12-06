@@ -1,46 +1,7 @@
-# Eli's User Interaction Program (Main.R)
-
-# Functions to write:
-
-# - getPlayerProfile(esports_data, player_name)
-#   Parameters: data, player name
-#   Returns: print statement of player name and stats
-
-# - comparePlayers(esports_data, player1, player2)
-#   Parameters: data, two player names
-#   Returns: print statement of two players getPlayerProfile, maybe side by side for easy comparison?
-
-# DONE
-
-# - getPlayerList(esports_data)
-#   Parameters: data
-#   Returns: print statement of all player names, sorted alphabetically maybe?
-
-# DONE
-
-# - getStatList(esports_data)
-#   Parameters: data
-#   Returns: print statement of all stats, sorted alphabetically maybe?
-
-# DONE
-
-# - compareSpecificStats(esports_data, player_names, stats_to_compare)
-#   Parameters: data, list of player names, list of stats to compare
-#   Returns: print statement of multiple players' specific stats
-
-# DONE
-
-# - getHighestStat(esports_data, stat)
-#   Parameters: data, stat
-#   Returns: print statement with player name and their specific specified stat, error if not numerical value
-
 cat("Welcome to the Logan, Landon, and Eli's Call of Duty Data Analyzer!\n")
 
 # Imports functions from other programs
-source("eli-get-by-cat.R")
-source("logan-get-by-filter.r")
-source("getData_LJMA.R")
-
+source("compile-info-functions.R")
 
 esportsData <- data_array
 

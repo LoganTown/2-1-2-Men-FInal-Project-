@@ -1,4 +1,4 @@
-source("eli-graph-stats.R")
+source("graph-stats.R")
 
 #ask for a list of csvs, for example: cod.csv, Cod_cwl_data.csv
 
